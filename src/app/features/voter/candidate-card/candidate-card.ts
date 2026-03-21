@@ -13,6 +13,7 @@ export class CandidateCard {
   @Input() candidate!: LeaderboardEntry;
   @Input() rank!: number;
   @Input() maxVotes!: number;
+  @Input() showVoteButton = true;
 
   onVote = output<LeaderboardEntry>();
 

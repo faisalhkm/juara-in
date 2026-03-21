@@ -36,13 +36,21 @@ serve(async (req) => {
     const { data: trx, error } = await supabase
       .from('transactions')
       .select(`
-        *,
-        candidates ( name, school_or_team ),
-        voters ( name, phone ),
-        vote_packages ( label )
-      `)
+          id,
+          amount_idr,
+          vote_count,
+          candidates (
+            name,
+            school_or_team,
+            events ( counting_duration_minutes )
+          ),
+          voters ( name, phone ),
+          vote_packages ( label )
+        `)
       .eq('id', transaction_id)
       .single()
+
+    const countingDuration = trx.candidates?.events?.counting_duration_minutes ?? 5;
 
     if (error || !trx) {
       return new Response(JSON.stringify({ error: 'Transaction not found' }), {
@@ -60,7 +68,7 @@ serve(async (req) => {
       },
       customer_details: {
         first_name: trx.voters.name,
-        phone: trx.voters.phone
+        phone: trx.voters.phone ?? ''
       },
       item_details: [{
         id: trx.vote_packages.label,
@@ -70,7 +78,7 @@ serve(async (req) => {
       }],
       expiry: {
         unit: 'minutes',
-        duration: 15
+        duration: countingDuration // dari DB, bukan hard-coded
       }
     }
 

@@ -26,6 +26,7 @@ export class EventForm implements OnInit {
   votingEnd = '';
   gracePeriod = 180;
   isActive = false;
+  countingDuration = 5;
 
   constructor(
     private supabase: SupabaseService,
@@ -53,6 +54,7 @@ export class EventForm implements OnInit {
     this.votingEnd = this.toDatetimeLocal(event.voting_end);
     this.gracePeriod = event.grace_period_seconds ?? 180;
     this.isActive = event.is_active;
+    this.countingDuration = event.counting_duration_minutes ?? 5;
   }
 
   private toDatetimeLocal(isoString: string): string {
@@ -87,7 +89,8 @@ export class EventForm implements OnInit {
       voting_start: new Date(this.votingStart).toISOString(),
       voting_end: new Date(this.votingEnd).toISOString(),
       grace_period_seconds: this.gracePeriod,
-      is_active: this.isActive
+      is_active: this.isActive,
+      counting_duration_minutes: this.countingDuration
     };
 
     if (this.isEdit && this.eventId) {

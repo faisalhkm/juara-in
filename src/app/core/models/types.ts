@@ -6,6 +6,7 @@ export interface Event {
   voting_start: string;
   voting_end: string;
   grace_period_seconds: number;
+  counting_duration_minutes: number;
   is_active: boolean;
 }
 

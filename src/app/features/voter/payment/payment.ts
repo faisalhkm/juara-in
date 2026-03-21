@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, signal, output, effect, OnInit} from '@angular/core';
+import {Component, Input, signal, output, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../../core/services/supabase';
 import { Candidate, VotePackage } from '../../../core/models/types';
@@ -43,7 +43,7 @@ export class Payment implements OnInit {
 
   constructor(
     private supabase: SupabaseService,
-    protected auth: AuthService
+    protected auth: AuthService,
   ) {}
 
   ngOnInit() {
@@ -201,7 +201,6 @@ export class Payment implements OnInit {
 
       // 4. Trigger Midtrans Snap popup
       this.step.set('package');
-      this.onClose.emit();
 
       window.snap.pay(snap_token, {
         onSuccess: (result) => {

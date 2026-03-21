@@ -97,20 +97,21 @@
         </div>
       </div>
 
-      <!-- Grace period -->
+      <!-- Counting duration -->
       <div>
         <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
-          Grace period (detik)
+          Durasi pembayaran (menit)
         </label>
         <input type="number"
-               [(ngModel)]="gracePeriod"
-               placeholder="180"
-               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               [(ngModel)]="countingDuration"
+               min="1"
+               max="60"
+               class="w-32 px-4 py-2.5 rounded-xl text-sm outline-none"
                style="background: var(--j-bg-card);
-                      border: 0.5px solid var(--j-border-accent);
-                      color: var(--j-text-primary)">
+                border: 0.5px solid var(--j-border-accent);
+                color: var(--j-text-primary)">
         <div class="text-xs mt-1" style="color: var(--j-text-muted)">
-          Waktu toleransi pembayaran setelah voting ditutup. Default: 180 detik (3 menit)
+          Batas waktu voter menyelesaikan pembayaran. Hasil voting baru tampil setelah durasi ini habis. Default: 5 menit
         </div>
       </div>
 
