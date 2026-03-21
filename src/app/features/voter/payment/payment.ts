@@ -59,7 +59,9 @@ export class Payment implements OnInit {
   }
 
   get isGoogleLoggedIn(): boolean {
-    return this.auth.isLoggedIn;
+    const user = this.auth.currentUser();
+    if (!user) return false;
+    return user.app_metadata?.['provider'] === 'google';
   }
 
   get googleUser() {
@@ -72,8 +74,14 @@ export class Payment implements OnInit {
   }
 
   async loginGoogle() {
-    this.isGoogleLoading.set(true);
+    const user = this.auth.currentUser();
+    if (user && user.app_metadata?.['provider'] !== 'google') {
+      if (!confirm('Login Google akan mengakhiri sesi admin kamu. Lanjutkan?')) {
+        return;
+      }
+    }
 
+    this.isGoogleLoading.set(true);
     // Simpan state voting sebelum redirect
     localStorage.setItem('juara_pending_vote', JSON.stringify({
       candidate: this.candidate,
@@ -98,12 +106,30 @@ export class Payment implements OnInit {
       this.step.set('identity');
       return;
     }
+
+    const fullName = user.user_metadata['full_name'] ??
+      user.user_metadata['name'] ??
+      user.email ??
+      'Google User';
+
+    if (!fullName || fullName === 'Google User') {
+      await this.supabase.signOut();
+      this.auth.currentUser.set(null);
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-')) localStorage.removeItem(key);
+      });
+      this.isGoogleLoading.set(false);
+      this.step.set('identity');
+      return;
+    }
+
     this.step.set('processing');
     await this.processPayment({
       google_id: user.id,
-      name: user.user_metadata['full_name'] ?? '',
-      display_name: user.user_metadata['full_name'] ?? '',
-      avatar_url: user.user_metadata['avatar_url'] ?? '',
+      name: fullName,
+      display_name: fullName,
+      avatar_url: user.user_metadata['avatar_url'] ??
+        user.user_metadata['picture'] ?? '',
     });
   }
 

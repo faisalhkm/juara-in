@@ -23,7 +23,7 @@ export class CandidateForm implements OnInit {
   // Form fields
   name = '';
   schoolOrTeam = '';
-  candidateNumber = 1;
+  candidateNumber = signal(1);
   photoUrl = '';
   photoFile: File | null = null;
 
@@ -43,13 +43,17 @@ export class CandidateForm implements OnInit {
       const { data } = await this.supabase.getCandidateById(this.candidateId);
       if (data) this.populateForm(data);
       this.isLoading.set(false);
+    } else {
+      const { data } = await this.supabase.getCandidatesByEvent(this.eventId);
+      const lastNumber = data?.reduce((max, c) => Math.max(max, c.candidate_number), 0) ?? 0;
+      this.candidateNumber.set(lastNumber + 1);
     }
   }
 
   private populateForm(candidate: Candidate) {
     this.name = candidate.name;
     this.schoolOrTeam = candidate.school_or_team;
-    this.candidateNumber = candidate.candidate_number;
+    this.candidateNumber.set(candidate.candidate_number);
     this.photoUrl = candidate.photo_url ?? '';
   }
 
@@ -59,7 +63,6 @@ export class CandidateForm implements OnInit {
 
     const file = input.files[0];
 
-    // Validasi 2MB
     if (file.size > 2 * 1024 * 1024) {
       this.errorMessage.set('Ukuran foto maksimal 2MB');
       return;
@@ -68,11 +71,7 @@ export class CandidateForm implements OnInit {
     this.photoFile = file;
     this.errorMessage.set(null);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.photoUrl = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+    this.photoUrl = URL.createObjectURL(file);
   }
 
   private async uploadPhoto(): Promise<string | null> {
@@ -93,8 +92,19 @@ export class CandidateForm implements OnInit {
   }
 
   async onSubmit() {
-    if (!this.name.trim() || !this.schoolOrTeam.trim() || !this.candidateNumber) {
+    if (!this.name.trim() || !this.schoolOrTeam.trim() || !this.candidateNumber()) {
       this.errorMessage.set('Nama, sekolah/tim, dan nomor kandidat wajib diisi');
+      return;
+    }
+
+    const { data: existing } = await this.supabase.getCandidatesByEvent(this.eventId);
+    const isDuplicate = existing?.some(c =>
+      c.candidate_number === this.candidateNumber() &&
+      c.id !== this.candidateId
+    );
+
+    if (isDuplicate) {
+      this.errorMessage.set(`Nomor kandidat ${this.candidateNumber()} sudah dipakai`);
       return;
     }
 
@@ -116,7 +126,7 @@ export class CandidateForm implements OnInit {
     const payload = {
       name: this.name.trim(),
       school_or_team: this.schoolOrTeam.trim(),
-      candidate_number: this.candidateNumber,
+      candidate_number: this.candidateNumber(),
       photo_url: finalPhotoUrl,
       event_id: this.eventId
     };

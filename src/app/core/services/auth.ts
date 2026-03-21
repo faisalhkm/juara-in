@@ -31,5 +31,8 @@ export class AuthService {
   async signOut() {
     await this.supabase.signOut();
     this.currentUser.set(null);
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sb-')) localStorage.removeItem(key);
+    });
   }
 }
