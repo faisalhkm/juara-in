@@ -1,0 +1,20 @@
+@if (timeLeft().isExpired) {
+  <div class="text-center py-2 text-sm font-bold" style="color: var(--j-purple)">
+    Voting telah ditutup
+  </div>
+} @else {
+  <div class="flex gap-2">
+    @for (item of [
+      { val: timeLeft().days, label: 'Hari' },
+      { val: timeLeft().hours, label: 'Jam' },
+      { val: timeLeft().minutes, label: 'Mnt' },
+      { val: timeLeft().seconds, label: 'Det' }
+    ]; track item.label) {
+      <div class="flex-1 rounded-lg py-2 text-center"
+           style="background: var(--j-bg-card); border: 0.5px solid var(--j-border-accent)">
+        <div class="text-base font-black" style="color: var(--j-green)">{{ item.val }}</div>
+        <div class="text-xs mt-0.5" style="color: var(--j-text-secondary)">{{ item.label }}</div>
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+:root {
+  --j-bg-base: #050510;
+  --j-bg-surface: #0a0a1a;
+  --j-bg-card: #0d0d1f;
+  --j-border: #111827;
+  --j-border-accent: #1a1a3a;
+  --j-green: #1D9E75;
+  --j-blue: #378ADD;
+  --j-purple: #7F77DD;
+  --j-gradient: linear-gradient(90deg, #1D9E75, #378ADD, #7F77DD);
+  --j-gradient-btn: linear-gradient(135deg, #0F6E56, #185FA5, #534AB7);
+  --j-text-primary: #e0e0ff;
+  --j-text-secondary: #555577;
+  --j-text-muted: #2a3a4f;
+
+  --j-purple-dark: #26215C;
+  --j-purple-mid: #534AB7;
+  --j-purple-dim: #2a2a5a;
+  --j-purple-border: #4a4a8a;
+  --j-purple-text: #AFA9EC;
+
+  --j-bg-google: #0d1f17;
+  --j-bg-anon: #111130;
+
+  --j-purple-btn: #7F77DD;
+  --j-purple-btn-text: #ffffff;
+
+  /* Color Error & Alerts */
+  --j-error: #FF4D4D;
+  --j-error-bg: #1A0505;
+  --j-error-border: #3D1111;
+  --j-error-text: #FF9999;
+
+  /* Optional: Warning (buat status pending/menunggu pembayaran) */
+  --j-warning: #FACC15;
+  --j-warning-bg: #1A1605;
+  --j-warning-border: #3D3511;
+}

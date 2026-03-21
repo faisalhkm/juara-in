@@ -1,0 +1,52 @@
+<div class="rounded-2xl p-3 flex items-center gap-3 transition-all active:scale-95"
+     [style.border]="isTop3 ? '0.5px solid ' + rankColor : '0.5px solid var(--j-border-accent)'"
+     style="background: var(--j-bg-surface)">
+
+  <!-- Rank badge -->
+  <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0"
+       [style.background]="rankBg"
+       [style.color]="rankColor">
+    {{ rank }}
+  </div>
+
+  <!-- Photo -->
+  <img [src]="candidate.photo_url"
+       [alt]="candidate.name"
+       class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
+
+  <!-- Info -->
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-1.5 mb-0.5">
+      <span class="text-xs px-1.5 py-0.5 rounded font-bold flex-shrink-0"
+            [style.background]="rankBg"
+            [style.color]="rankColor">
+        #{{ candidate.candidate_number }}
+      </span>
+      <span class="text-xs font-semibold truncate" style="color: var(--j-text-primary)">
+        {{ candidate.name }}
+      </span>
+    </div>
+    <div class="text-xs truncate mb-1.5" style="color: var(--j-text-secondary)">
+      {{ candidate.school_or_team }}
+    </div>
+
+    <!-- Vote bar -->
+    <div class="h-1 rounded-full w-full" style="background: var(--j-bg-card)">
+      <div class="h-1 rounded-full transition-all duration-700"
+           [style.width]="votePercent + '%'"
+           style="background: var(--j-gradient)">
+      </div>
+    </div>
+    <div class="text-xs font-bold mt-1" style="color: var(--j-green)">
+      {{ formatVotes(candidate.total_votes) }} votes
+    </div>
+  </div>
+
+  <!-- Vote button -->
+  <button class="flex-shrink-0 px-3 py-2 rounded-xl text-xs font-bold text-white"
+          style="background: var(--j-gradient-btn)"
+          (click)="onVote.emit(candidate)">
+    Vote
+  </button>
+
+</div>

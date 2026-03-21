@@ -1,0 +1,71 @@
+<div class="min-h-screen" style="background: var(--j-bg-base)">
+
+  <!-- Header -->
+  <div class="px-5 pt-12 pb-6">
+    <div class="text-sm font-medium mb-1" style="color: var(--j-green)">
+      Platform voting lomba
+    </div>
+    <h1 class="text-3xl font-black tracking-tight" style="color: var(--j-text-primary)">
+      Juara<span class="bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">.in</span>
+    </h1>
+    <p class="text-sm mt-1" style="color: var(--j-text-secondary)">
+      Pilih event dan dukung favoritmu
+    </p>
+  </div>
+
+  <!-- Live indicator -->
+  <div class="px-5 mb-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-green); color: var(--j-green)">
+      <span class="live-dot"></span>
+      {{ events().length }} event berlangsung
+    </div>
+  </div>
+
+  <!-- Event cards -->
+  <div class="px-5 flex flex-col gap-4 pb-10">
+    @for (event of events(); track event.id) {
+      <div class="rounded-2xl p-5 cursor-pointer transition-all active:scale-95"
+           style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)"
+           (click)="goToEvent(event.slug)">
+
+        <!-- Top row -->
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <div class="text-xs mb-1.5" style="color: var(--j-text-secondary)">
+              {{ event.category }}
+            </div>
+            <h2 class="text-base font-bold leading-snug" style="color: var(--j-text-primary)">
+              {{ event.name }}
+            </h2>
+          </div>
+          <div class="shrink-0 text-xs px-2.5 py-1 rounded-lg font-semibold"
+               style="background: var(--j-bg-card); color: var(--j-green); border: 0.5px solid var(--j-green)">
+            Live
+          </div>
+        </div>
+
+        <!-- Gradient divider -->
+        <div class="h-px mb-4" style="background: var(--j-gradient)"></div>
+
+        <!-- Time left -->
+        <div class="flex items-center justify-between">
+          <div class="text-xs" style="color: var(--j-text-secondary)">
+            Sisa waktu
+          </div>
+          <div class="text-xs font-bold" style="color: var(--j-purple)">
+            {{ getTimeLeft(event.voting_end) }}
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button class="w-full mt-4 py-3 rounded-xl text-sm font-bold text-white"
+                style="background: var(--j-gradient-btn)">
+          Lihat kandidat & vote
+        </button>
+
+      </div>
+    }
+  </div>
+
+</div>
