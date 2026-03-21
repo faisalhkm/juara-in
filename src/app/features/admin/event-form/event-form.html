@@ -1,1 +1,167 @@
-<p>event-form works!</p>
+<div class="p-8 max-w-2xl">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-8">
+    <a routerLink="/admin/events"
+       class="text-sm"
+       style="color: var(--j-text-secondary)">
+      ← Events
+    </a>
+    <span style="color: var(--j-text-muted)">/</span>
+    <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">
+      {{ isEdit ? 'Edit event' : 'Buat event baru' }}
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat data...</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="rounded-2xl p-6 flex flex-col gap-5"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+      <!-- Nama event -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Nama event <span style="color: var(--j-error)">*</span>
+        </label>
+        <input type="text"
+               [(ngModel)]="name"
+               (blur)="!isEdit && generateSlug()"
+               placeholder="Paskibra Championship Jakarta 2026"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Kategori -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Kategori
+        </label>
+        <input type="text"
+               [(ngModel)]="category"
+               placeholder="Paskibra SMA Se-Jakarta"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Slug -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          URL Slug <span style="color: var(--j-error)">*</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <span class="text-xs flex-shrink-0" style="color: var(--j-text-muted)">juara.in/vote/</span>
+          <input type="text"
+                 [(ngModel)]="slug"
+                 placeholder="paskibra-jakarta-2026"
+                 class="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none"
+                 style="background: var(--j-bg-card);
+                        border: 0.5px solid var(--j-border-accent);
+                        color: var(--j-text-primary)">
+        </div>
+      </div>
+
+      <!-- Tanggal mulai & selesai -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+            Mulai voting <span style="color: var(--j-error)">*</span>
+          </label>
+          <input type="datetime-local"
+                 [(ngModel)]="votingStart"
+                 class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                 style="background: var(--j-bg-card);
+                        border: 0.5px solid var(--j-border-accent);
+                        color: var(--j-text-primary)">
+        </div>
+        <div>
+          <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+            Selesai voting <span style="color: var(--j-error)">*</span>
+          </label>
+          <input type="datetime-local"
+                 [(ngModel)]="votingEnd"
+                 class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                 style="background: var(--j-bg-card);
+                        border: 0.5px solid var(--j-border-accent);
+                        color: var(--j-text-primary)">
+        </div>
+      </div>
+
+      <!-- Grace period -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Grace period (detik)
+        </label>
+        <input type="number"
+               [(ngModel)]="gracePeriod"
+               placeholder="180"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+        <div class="text-xs mt-1" style="color: var(--j-text-muted)">
+          Waktu toleransi pembayaran setelah voting ditutup. Default: 180 detik (3 menit)
+        </div>
+      </div>
+
+      <!-- Status aktif -->
+      <div class="flex items-center justify-between py-3 px-4 rounded-xl"
+           style="background: var(--j-bg-card); border: 0.5px solid var(--j-border-accent)">
+        <div>
+          <div class="text-sm font-bold" style="color: var(--j-text-primary)">Aktifkan voting</div>
+          <div class="text-xs mt-0.5" style="color: var(--j-text-secondary)">
+            Voter bisa langsung mengakses halaman voting
+          </div>
+        </div>
+        <button class="relative w-10 h-6 rounded-full transition-all flex-shrink-0"
+                [style.background]="isActive ? 'var(--j-green)' : 'var(--j-bg-surface)'"
+                [style.border]="isActive ? '0.5px solid var(--j-green)' : '0.5px solid var(--j-border-accent)'"
+                (click)="isActive = !isActive">
+          <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
+                [style.left]="isActive ? '18px' : '2px'">
+          </span>
+        </button>
+      </div>
+
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="px-4 py-3 rounded-xl text-xs"
+             style="background: var(--j-error-bg);
+                    border: 0.5px solid var(--j-error-border);
+                    color: var(--j-error-text)">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-2">
+        <button class="flex-1 py-3 rounded-xl text-sm font-bold text-white"
+                [style.opacity]="isSaving() ? '0.6' : '1'"
+                [style.background]="'var(--j-gradient-btn)'"
+                [disabled]="isSaving()"
+                (click)="onSubmit()">
+          {{ isSaving() ? 'Menyimpan...' : isEdit ? 'Simpan perubahan' : 'Buat event' }}
+        </button>
+        <a routerLink="/admin/events"
+           class="px-5 py-3 rounded-xl text-sm font-bold"
+           style="background: var(--j-bg-card);
+                  border: 0.5px solid var(--j-border-accent);
+                  color: var(--j-text-secondary)">
+          Batal
+        </a>
+      </div>
+
+    </div>
+  }
+
+</div>

@@ -1,1 +1,143 @@
-<p>candidate-form works!</p>
+<div class="p-8 max-w-2xl">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-8">
+    <a [routerLink]="['/admin/events', eventId, 'candidates']"
+       class="text-sm" style="color: var(--j-text-secondary)">
+      ← Kandidat
+    </a>
+    <span style="color: var(--j-text-muted)">/</span>
+    <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">
+      {{ isEdit ? 'Edit kandidat' : 'Tambah kandidat' }}
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat data...</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="rounded-2xl p-6 flex flex-col gap-5"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+      <!-- Photo upload -->
+      <div>
+        <label class="text-xs font-bold mb-3 block" style="color: var(--j-text-secondary)">
+          Foto kandidat
+        </label>
+        <div class="flex items-center gap-4">
+          <!-- Preview -->
+          @if (photoUrl) {
+            <img [src]="photoUrl"
+                 class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
+          } @else {
+            <div class="w-20 h-20 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="background: var(--j-bg-card); border: 0.5px dashed var(--j-border-accent)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                   style="color: var(--j-text-muted)">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+          }
+          <div>
+            <label class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer"
+                   style="background: var(--j-bg-card);
+                          border: 0.5px solid var(--j-border-accent);
+                          color: var(--j-text-primary)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              {{ isUploadingPhoto() ? 'Mengupload...' : 'Upload foto' }}
+              <input type="file"
+                     accept="image/*"
+                     class="hidden"
+                     (change)="onPhotoSelected($event)">
+            </label>
+            <div class="text-xs mt-1.5" style="color: var(--j-text-muted)">
+              JPG, PNG. Maks 2MB.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nomor kandidat -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Nomor kandidat <span style="color: var(--j-error)">*</span>
+        </label>
+        <input type="number"
+               [(ngModel)]="candidateNumber"
+               min="1"
+               class="w-32 px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Nama -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Nama kandidat <span style="color: var(--j-error)">*</span>
+        </label>
+        <input type="text"
+               [(ngModel)]="name"
+               placeholder="Anisa Rahma"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Sekolah/Tim -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Sekolah / Tim <span style="color: var(--j-error)">*</span>
+        </label>
+        <input type="text"
+               [(ngModel)]="schoolOrTeam"
+               placeholder="SMAN 1 Jakarta"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="px-4 py-3 rounded-xl text-xs"
+             style="background: var(--j-error-bg);
+                    border: 0.5px solid var(--j-error-border);
+                    color: var(--j-error-text)">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-2">
+        <button class="flex-1 py-3 rounded-xl text-sm font-bold text-white"
+                [style.opacity]="isSaving() ? '0.6' : '1'"
+                [style.background]="'var(--j-gradient-btn)'"
+                [disabled]="isSaving()"
+                (click)="onSubmit()">
+          {{ isSaving() ? 'Menyimpan...' : isEdit ? 'Simpan perubahan' : 'Tambah kandidat' }}
+        </button>
+        <a [routerLink]="['/admin/events', eventId, 'candidates']"
+           class="px-5 py-3 rounded-xl text-sm font-bold"
+           style="background: var(--j-bg-card);
+                  border: 0.5px solid var(--j-border-accent);
+                  color: var(--j-text-secondary)">
+          Batal
+        </a>
+      </div>
+
+    </div>
+  }
+
+</div>

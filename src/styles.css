@@ -34,7 +34,7 @@
   --j-error-border: #3D1111;
   --j-error-text: #FF9999;
 
-  /* Optional: Warning (buat status pending/menunggu pembayaran) */
+  /* Optional: Warning */
   --j-warning: #FACC15;
   --j-warning-bg: #1A1605;
   --j-warning-border: #3D3511;

@@ -1,1 +1,68 @@
-<p>login works!</p>
+<div class="min-h-screen flex items-center justify-center px-5"
+     style="background: var(--j-bg-base)">
+  <div class="w-full max-w-sm">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-black tracking-tight" style="color: var(--j-text-primary)">
+        Juara<span style="background: var(--j-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent">.in</span>
+      </h1>
+      <p class="text-sm mt-1" style="color: var(--j-text-secondary)">Admin Panel</p>
+    </div>
+
+    <!-- Card -->
+    <div class="rounded-2xl p-6"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+      <div class="text-sm font-bold mb-5" style="color: var(--j-text-primary)">
+        Masuk ke dashboard
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <div class="text-xs mb-1.5" style="color: var(--j-text-secondary)">Email</div>
+        <input type="email"
+               [(ngModel)]="email"
+               placeholder="admin@juara.in"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-5">
+        <div class="text-xs mb-1.5" style="color: var(--j-text-secondary)">Password</div>
+        <input type="password"
+               [(ngModel)]="password"
+               placeholder="••••••••"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)"
+               (keyup.enter)="onSubmit()">
+      </div>
+
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="mb-4 px-3 py-2.5 rounded-xl text-xs"
+             style="background: var(--j-error-bg);
+              border: 0.5px solid var(--j-error-border);
+              color: var(--j-error-text)">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Submit -->
+      <button class="w-full py-3 rounded-xl text-sm font-bold text-white"
+              [style.opacity]="isLoading() ? '0.6' : '1'"
+              [style.background]="'var(--j-gradient-btn)'"
+              [disabled]="isLoading()"
+              (click)="onSubmit()">
+        {{ isLoading() ? 'Masuk...' : 'Masuk' }}
+      </button>
+
+    </div>
+
+  </div>
+</div>

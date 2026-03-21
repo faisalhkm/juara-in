@@ -11,11 +11,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/voter/event-detail/event-detail').then(m => m.EventDetail)
   },
-  // {
-  //   path: 'admin',
-  //   loadChildren: () =>
-  //     import('./features/admin/admin.routes').then(m => m.adminRoutes)
-  // },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/admin/admin.routes').then(m => m.adminRoutes)
+  },
   {
     path: '**',
     redirectTo: ''

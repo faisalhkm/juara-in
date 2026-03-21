@@ -1,1 +1,131 @@
-<p>package-form works!</p>
+<div class="p-8 max-w-2xl">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-8">
+    <a [routerLink]="['/admin/events', eventId, 'packages']"
+       class="text-sm" style="color: var(--j-text-secondary)">
+      ← Paket vote
+    </a>
+    <span style="color: var(--j-text-muted)">/</span>
+    <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">
+      {{ isEdit ? 'Edit paket' : 'Tambah paket' }}
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat data...</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="rounded-2xl p-6 flex flex-col gap-5"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+      <!-- Label -->
+      <div>
+        <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+          Nama paket <span style="color: var(--j-error)">*</span>
+        </label>
+        <input type="text"
+               [(ngModel)]="label"
+               placeholder="Starter / Super / Mega"
+               class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+               style="background: var(--j-bg-card);
+                      border: 0.5px solid var(--j-border-accent);
+                      color: var(--j-text-primary)">
+      </div>
+
+      <!-- Vote count & Harga -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+            Jumlah vote <span style="color: var(--j-error)">*</span>
+          </label>
+          <input type="number"
+                 [(ngModel)]="voteCount"
+                 min="1"
+                 class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                 style="background: var(--j-bg-card);
+                        border: 0.5px solid var(--j-border-accent);
+                        color: var(--j-text-primary)">
+        </div>
+        <div>
+          <label class="text-xs font-bold mb-1.5 block" style="color: var(--j-text-secondary)">
+            Harga (IDR) <span style="color: var(--j-error)">*</span>
+          </label>
+          <input type="number"
+                 [(ngModel)]="priceIdr"
+                 min="0"
+                 placeholder="2000"
+                 class="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                 style="background: var(--j-bg-card);
+                        border: 0.5px solid var(--j-border-accent);
+                        color: var(--j-text-primary)">
+        </div>
+      </div>
+
+      <!-- Price per vote indicator -->
+      @if (voteCount > 0 && priceIdr > 0) {
+        <div class="px-4 py-3 rounded-xl flex items-center justify-between"
+             style="background: var(--j-bg-card); border: 0.5px solid var(--j-border-accent)">
+          <span class="text-xs" style="color: var(--j-text-secondary)">Harga per vote</span>
+          <span class="text-sm font-bold" style="color: var(--j-green)">
+            Rp {{ pricePerVote.toLocaleString('id-ID') }}
+          </span>
+        </div>
+      }
+
+      <!-- Status aktif -->
+      <div class="flex items-center justify-between py-3 px-4 rounded-xl"
+           style="background: var(--j-bg-card); border: 0.5px solid var(--j-border-accent)">
+        <div>
+          <div class="text-sm font-bold" style="color: var(--j-text-primary)">Aktifkan paket</div>
+          <div class="text-xs mt-0.5" style="color: var(--j-text-secondary)">
+            Paket tampil di halaman voting
+          </div>
+        </div>
+        <button class="relative w-10 h-6 rounded-full transition-all flex-shrink-0"
+                [style.background]="isActive ? 'var(--j-green)' : 'var(--j-bg-surface)'"
+                [style.border]="isActive ? '0.5px solid var(--j-green)' : '0.5px solid var(--j-border-accent)'"
+                (click)="isActive = !isActive">
+          <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
+                [style.left]="isActive ? '18px' : '2px'">
+          </span>
+        </button>
+      </div>
+
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="px-4 py-3 rounded-xl text-xs"
+             style="background: var(--j-error-bg);
+                    border: 0.5px solid var(--j-error-border);
+                    color: var(--j-error-text)">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-2">
+        <button class="flex-1 py-3 rounded-xl text-sm font-bold text-white"
+                [style.opacity]="isSaving() ? '0.6' : '1'"
+                [style.background]="'var(--j-gradient-btn)'"
+                [disabled]="isSaving()"
+                (click)="onSubmit()">
+          {{ isSaving() ? 'Menyimpan...' : isEdit ? 'Simpan perubahan' : 'Tambah paket' }}
+        </button>
+        <a [routerLink]="['/admin/events', eventId, 'packages']"
+           class="px-5 py-3 rounded-xl text-sm font-bold"
+           style="background: var(--j-bg-card);
+                  border: 0.5px solid var(--j-border-accent);
+                  color: var(--j-text-secondary)">
+          Batal
+        </a>
+      </div>
+
+    </div>
+  }
+
+</div>

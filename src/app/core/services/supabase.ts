@@ -68,6 +68,14 @@ export class SupabaseService {
       .single();
   }
 
+  getEventById(id: string) {
+    return this.supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single();
+  }
+
   // ── Candidates ───────────────────────────────────────────
   getCandidatesByEvent(eventId: string) {
     return this.supabase
@@ -180,5 +188,141 @@ export class SupabaseService {
       .storage
       .from('candidate-photos')
       .getPublicUrl(path).data.publicUrl;
+  }
+
+  // ── Admin queries ─────────────────────────────────────────
+  getAdminEvents() {
+    return this.supabase
+      .from('events')
+      .select('*')
+      .order('created_at', { ascending: false });
+  }
+
+  getSuccessTransactions() {
+    return this.supabase
+      .from('transactions')
+      .select('amount_idr, vote_count')
+      .eq('status', 'success');
+  }
+
+  updateEvent(id: string, payload: Partial<Event>) {
+    return this.supabase
+      .from('events')
+      .update(payload)
+      .eq('id', id);
+  }
+
+  deleteEvent(id: string) {
+    return this.supabase
+      .from('events')
+      .delete()
+      .eq('id', id);
+  }
+
+  createEvent(payload: {
+    name: string;
+    category: string;
+    slug: string;
+    voting_start: string;
+    voting_end: string;
+    grace_period_seconds: number;
+    is_active: boolean;
+  }) {
+    return this.supabase
+      .from('events')
+      .insert(payload)
+      .select()
+      .single();
+  }
+
+  // ── Candidate admin ───────────────────────────────────────
+  getCandidateById(id: string) {
+    return this.supabase
+      .from('candidates')
+      .select('*')
+      .eq('id', id)
+      .single();
+  }
+
+  createCandidate(payload: {
+    name: string;
+    school_or_team: string;
+    candidate_number: number;
+    photo_url: string;
+    event_id: string;
+  }) {
+    return this.supabase
+      .from('candidates')
+      .insert(payload)
+      .select()
+      .single();
+  }
+
+  updateCandidate(id: string, payload: Partial<Candidate>) {
+    return this.supabase
+      .from('candidates')
+      .update(payload)
+      .eq('id', id);
+  }
+
+  deleteCandidate(id: string) {
+    return this.supabase
+      .from('candidates')
+      .delete()
+      .eq('id', id);
+  }
+
+  uploadCandidatePhoto(fileName: string, file: File) {
+    return this.supabase
+      .storage
+      .from('candidate-photos')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+  }
+
+  getAdminPackagesByEvent(eventId: string) {
+    return this.supabase
+      .from('vote_packages')
+      .select('*')
+      .eq('event_id', eventId)
+      .order('price_idr');
+  }
+
+  updatePackage(id: string, payload: Partial<VotePackage>) {
+    return this.supabase
+      .from('vote_packages')
+      .update(payload)
+      .eq('id', id);
+  }
+
+  deletePackage(id: string) {
+    return this.supabase
+      .from('vote_packages')
+      .delete()
+      .eq('id', id);
+  }
+
+  getPackageById(id: string) {
+    return this.supabase
+      .from('vote_packages')
+      .select('*')
+      .eq('id', id)
+      .single();
+  }
+
+  createPackage(payload: {
+    label: string;
+    vote_count: number;
+    price_idr: number;
+    is_active: boolean;
+    event_id: string;
+  }) {
+    return this.supabase
+      .from('vote_packages')
+      .insert(payload)
+      .select()
+      .single();
   }
 }

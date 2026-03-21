@@ -1,1 +1,133 @@
-<p>event-list works!</p>
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">Events</h1>
+      <p class="text-sm mt-1" style="color: var(--j-text-secondary)">
+        Kelola semua event voting
+      </p>
+    </div>
+    <a routerLink="/admin/events/new"
+       class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+       style="background: var(--j-gradient-btn)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Buat event
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat...</span>
+    </div>
+  }
+
+  @if (!isLoading() && events().length === 0) {
+    <div class="rounded-2xl p-10 text-center"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+      <div class="text-sm mb-3" style="color: var(--j-text-secondary)">Belum ada event</div>
+      <a routerLink="/admin/events/new"
+         class="text-sm font-bold"
+         style="color: var(--j-green)">
+        Buat event pertama →
+      </a>
+    </div>
+  }
+
+  @if (!isLoading() && events().length > 0) {
+    <div class="flex flex-col gap-3">
+      @for (event of events(); track event.id) {
+        <div class="rounded-2xl p-5"
+             style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+          <!-- Top row -->
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                      [style.background]="event.is_active ? '#04342C' : 'var(--j-bg-card)'"
+                      [style.color]="event.is_active ? 'var(--j-green)' : 'var(--j-text-muted)'">
+                  {{ event.is_active ? 'Aktif' : 'Nonaktif' }}
+                </span>
+                <span class="text-xs" style="color: var(--j-text-muted)">{{ event.category }}</span>
+              </div>
+              <h2 class="text-base font-bold truncate" style="color: var(--j-text-primary)">
+                {{ event.name }}
+              </h2>
+              <div class="text-xs mt-1" style="color: var(--j-text-secondary)">
+                {{ formatDate(event.voting_start) }} — {{ formatDate(event.voting_end) }}
+              </div>
+            </div>
+
+            <!-- Toggle active -->
+            <button class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    [style.background]="event.is_active ? 'var(--j-error-bg)' : '#04342C'"
+                    [style.color]="event.is_active ? 'var(--j-error-text)' : 'var(--j-green)'"
+                    [style.border]="event.is_active ? '0.5px solid var(--j-error-border)' : '0.5px solid var(--j-green)'"
+                    (click)="toggleActive(event)">
+              {{ event.is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+            </button>
+          </div>
+
+          <!-- Gradient divider -->
+          <div class="h-px mb-4" style="background: var(--j-gradient); opacity: 0.3"></div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2">
+            <a [routerLink]="['/admin/events', event.id, 'candidates']"
+               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+               style="background: var(--j-bg-card); color: var(--j-text-secondary); border: 0.5px solid var(--j-border-accent)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Kandidat
+            </a>
+
+            <a [routerLink]="['/admin/events', event.id, 'packages']"
+               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+               style="background: var(--j-bg-card); color: var(--j-text-secondary); border: 0.5px solid var(--j-border-accent)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+              Paket vote
+            </a>
+
+            <a [routerLink]="['/admin/events', event.id, 'edit']"
+               class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+               style="background: var(--j-bg-card); color: var(--j-text-secondary); border: 0.5px solid var(--j-border-accent)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Edit
+            </a>
+
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ml-auto"
+                    [style.opacity]="deletingId() === event.id ? '0.5' : '1'"
+                    style="background: var(--j-error-bg); color: var(--j-error-text); border: 0.5px solid var(--j-error-border)"
+                    [disabled]="deletingId() === event.id"
+                    (click)="deleteEvent(event.id)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+              Hapus
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

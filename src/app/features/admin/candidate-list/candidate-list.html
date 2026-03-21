@@ -1,1 +1,109 @@
-<p>candidate-list works!</p>
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <a routerLink="/admin/events"
+           class="text-sm" style="color: var(--j-text-secondary)">Events</a>
+        <span style="color: var(--j-text-muted)">/</span>
+        <span class="text-sm" style="color: var(--j-text-secondary)">
+          {{ event()?.name ?? '...' }}
+        </span>
+        <span style="color: var(--j-text-muted)">/</span>
+        <span class="text-sm" style="color: var(--j-text-primary)">Kandidat</span>
+      </div>
+      <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">Kandidat</h1>
+    </div>
+    <a [routerLink]="['/admin/events', eventId, 'candidates', 'new']"
+       class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+       style="background: var(--j-gradient-btn)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Tambah kandidat
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat...</span>
+    </div>
+  }
+
+  @if (!isLoading() && candidates().length === 0) {
+    <div class="rounded-2xl p-10 text-center"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+      <div class="text-sm mb-3" style="color: var(--j-text-secondary)">Belum ada kandidat</div>
+      <a [routerLink]="['/admin/events', eventId, 'candidates', 'new']"
+         class="text-sm font-bold" style="color: var(--j-green)">
+        Tambah kandidat pertama →
+      </a>
+    </div>
+  }
+
+  @if (!isLoading() && candidates().length > 0) {
+    <div class="flex flex-col gap-3">
+      @for (candidate of candidates(); track candidate.id) {
+        <div class="rounded-2xl p-4 flex items-center gap-4"
+             style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+          <!-- Photo -->
+          @if (candidate.photo_url) {
+            <img [src]="candidate.photo_url"
+                 [alt]="candidate.name"
+                 class="w-14 h-14 rounded-xl object-cover flex-shrink-0">
+          } @else {
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="background: var(--j-bg-card); color: var(--j-text-muted)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+          }
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xs px-1.5 py-0.5 rounded font-bold"
+                    style="background: var(--j-purple-dark); color: var(--j-purple-text)">
+                #{{ candidate.candidate_number }}
+              </span>
+              <span class="text-sm font-bold truncate" style="color: var(--j-text-primary)">
+                {{ candidate.name }}
+              </span>
+            </div>
+            <div class="text-xs" style="color: var(--j-text-secondary)">
+              {{ candidate.school_or_team }}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <a [routerLink]="['/admin/events', eventId, 'candidates', candidate.id, 'edit']"
+               class="px-3 py-1.5 rounded-lg text-xs font-medium"
+               style="background: var(--j-bg-card);
+                      color: var(--j-text-secondary);
+                      border: 0.5px solid var(--j-border-accent)">
+              Edit
+            </a>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    [style.opacity]="deletingId() === candidate.id ? '0.5' : '1'"
+                    style="background: var(--j-error-bg);
+                           color: var(--j-error-text);
+                           border: 0.5px solid var(--j-error-border)"
+                    [disabled]="deletingId() === candidate.id"
+                    (click)="deleteCandidate(candidate.id)">
+              Hapus
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

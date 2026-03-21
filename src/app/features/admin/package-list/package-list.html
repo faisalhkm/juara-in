@@ -1,1 +1,111 @@
-<p>package-list works!</p>
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <a routerLink="/admin/events"
+           class="text-sm" style="color: var(--j-text-secondary)">Events</a>
+        <span style="color: var(--j-text-muted)">/</span>
+        <span class="text-sm" style="color: var(--j-text-secondary)">
+          {{ event()?.name ?? '...' }}
+        </span>
+        <span style="color: var(--j-text-muted)">/</span>
+        <span class="text-sm" style="color: var(--j-text-primary)">Paket vote</span>
+      </div>
+      <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">Paket vote</h1>
+    </div>
+    <a [routerLink]="['/admin/events', eventId, 'packages', 'new']"
+       class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+       style="background: var(--j-gradient-btn)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Tambah paket
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat...</span>
+    </div>
+  }
+
+  @if (!isLoading() && packages().length === 0) {
+    <div class="rounded-2xl p-10 text-center"
+         style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+      <div class="text-sm mb-3" style="color: var(--j-text-secondary)">Belum ada paket vote</div>
+      <a [routerLink]="['/admin/events', eventId, 'packages', 'new']"
+         class="text-sm font-bold" style="color: var(--j-green)">
+        Tambah paket pertama →
+      </a>
+    </div>
+  }
+
+  @if (!isLoading() && packages().length > 0) {
+    <div class="flex flex-col gap-3">
+      @for (pkg of packages(); track pkg.id) {
+        <div class="rounded-2xl p-4 flex items-center gap-4"
+             style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+
+          <!-- Vote count badge -->
+          <div class="w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0"
+               style="background: var(--j-bg-card); border: 0.5px solid var(--j-border-accent)">
+            <div class="text-lg font-black" style="color: var(--j-green)">
+              {{ pkg.vote_count }}
+            </div>
+            <div class="text-xs" style="color: var(--j-text-muted)">votes</div>
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-sm font-bold" style="color: var(--j-text-primary)">
+                {{ pkg.label }}
+              </span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-bold"
+                    [style.background]="pkg.is_active ? '#04342C' : 'var(--j-bg-card)'"
+                    [style.color]="pkg.is_active ? 'var(--j-green)' : 'var(--j-text-muted)'">
+                {{ pkg.is_active ? 'Aktif' : 'Nonaktif' }}
+              </span>
+            </div>
+            <div class="text-base font-black" style="color: var(--j-blue)">
+              {{ formatRupiah(pkg.price_idr) }}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    [style.background]="pkg.is_active ? 'var(--j-error-bg)' : '#04342C'"
+                    [style.color]="pkg.is_active ? 'var(--j-error-text)' : 'var(--j-green)'"
+                    [style.border]="pkg.is_active ? '0.5px solid var(--j-error-border)' : '0.5px solid var(--j-green)'"
+                    (click)="togglePackageActive(pkg)">
+              {{ pkg.is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+            </button>
+            <a [routerLink]="['/admin/events', eventId, 'packages', pkg.id, 'edit']"
+               class="px-3 py-1.5 rounded-lg text-xs font-medium"
+               style="background: var(--j-bg-card);
+                      color: var(--j-text-secondary);
+                      border: 0.5px solid var(--j-border-accent)">
+              Edit
+            </a>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium"
+                    [style.opacity]="deletingId() === pkg.id ? '0.5' : '1'"
+                    style="background: var(--j-error-bg);
+                           color: var(--j-error-text);
+                           border: 0.5px solid var(--j-error-border)"
+                    [disabled]="deletingId() === pkg.id"
+                    (click)="deletePackage(pkg.id)">
+              Hapus
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

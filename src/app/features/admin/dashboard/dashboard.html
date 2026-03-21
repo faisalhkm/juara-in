@@ -1,1 +1,82 @@
-<p>dashboard works!</p>
+<div class="p-8">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-black" style="color: var(--j-text-primary)">Dashboard</h1>
+    <p class="text-sm mt-1" style="color: var(--j-text-secondary)">Rekap semua event Juara.in</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex items-center gap-2" style="color: var(--j-text-secondary)">
+      <div class="w-4 h-4 rounded-full border border-t-transparent animate-spin"
+           style="border-color: var(--j-green); border-top-color: transparent"></div>
+      <span class="text-sm">Memuat data...</span>
+    </div>
+  }
+
+  @if (!isLoading()) {
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+
+      <div class="rounded-2xl p-5"
+           style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+        <div class="text-xs mb-2" style="color: var(--j-text-secondary)">Total income</div>
+        <div class="text-2xl font-black" style="color: var(--j-green)">
+          {{ formatRupiah(stats().totalIncome) }}
+        </div>
+        <div class="text-xs mt-1" style="color: var(--j-text-muted)">
+          {{ stats().totalTransactions }} transaksi sukses
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-5"
+           style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+        <div class="text-xs mb-2" style="color: var(--j-text-secondary)">Total votes</div>
+        <div class="text-2xl font-black" style="color: var(--j-blue)">
+          {{ stats().totalVotes.toLocaleString('id-ID') }}
+        </div>
+        <div class="text-xs mt-1" style="color: var(--j-text-muted)">
+          Dari semua event
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-5"
+           style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
+        <div class="text-xs mb-2" style="color: var(--j-text-secondary)">Events aktif</div>
+        <div class="text-2xl font-black" style="color: var(--j-purple)">
+          {{ stats().activeEvents }}
+        </div>
+        <div class="text-xs mt-1" style="color: var(--j-text-muted)">
+          dari {{ stats().totalEvents }} total event
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick actions -->
+    <div class="mb-6">
+      <div class="text-xs font-bold tracking-widest uppercase mb-3"
+           style="color: var(--j-text-muted)">
+        Quick actions
+      </div>
+      <div class="flex gap-3">
+        <a routerLink="/admin/events/new"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+           style="background: var(--j-gradient-btn)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Buat event baru
+        </a>
+        <a routerLink="/admin/events"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold"
+           style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent); color: var(--j-text-primary)">
+          Kelola events
+        </a>
+      </div>
+    </div>
+
+  }
+
+</div>
