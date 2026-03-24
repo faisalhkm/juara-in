@@ -70,6 +70,25 @@
         <app-countdown-timer [targetDate]="getCountingEndDate()" />
       }
 
+      @if (auth.isLoggedIn) {
+        <div class="flex items-center justify-between mt-3 px-1">
+          <div class="flex items-center gap-2">
+            @if (auth.currentUser()?.user_metadata?.['avatar_url']) {
+              <img [src]="auth.currentUser()!.user_metadata['avatar_url']"
+                   class="w-5 h-5 rounded-full object-cover">
+            }
+            <span class="text-xs" style="color: var(--j-text-secondary)">
+        {{ auth.currentUser()?.user_metadata?.['full_name'] }}
+      </span>
+          </div>
+          <button class="text-xs"
+                  style="color: var(--j-text-muted)"
+                  (click)="auth.signOut()">
+            Keluar
+          </button>
+        </div>
+      }
+
     </div>
 
     <!-- Kandidat / Leaderboard -->
@@ -121,18 +140,18 @@
     <!-- Top Donors — hanya tampil saat active atau ended -->
     @if (eventState() !== 'upcoming') {
       <div class="px-5 mt-6">
-        <div class="text-xs font-bold tracking-widest uppercase mb-3"
+        <div class="text-xs font-bold tracking-widest uppercase"
              style="color: var(--j-text-muted)">
           Top donors
+        </div>
+        <div class="text-xs mt-1 mb-3" style="color: var(--j-text-muted)">
+          Login Google saat vote untuk tampil di sini
         </div>
 
         @if (topDonors().length === 0) {
           <div class="rounded-2xl px-4 py-6 text-center"
                style="background: var(--j-bg-surface); border: 0.5px solid var(--j-border-accent)">
             <div class="text-sm" style="color: var(--j-text-secondary)">Belum ada donor</div>
-            <div class="text-xs mt-1" style="color: var(--j-text-muted)">
-              Login Google saat vote untuk tampil di sini
-            </div>
           </div>
         }
 
